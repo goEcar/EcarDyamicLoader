@@ -21,22 +21,39 @@ public class MainActivity extends AppCompatActivity {
 
 
         //反射
-        reflect();
+//        reflect();
+        testGson();
+
+    }
+
+    //测试gson
+    private void testGson() {
+
+        Method gsons1=
+                null;
+        Method gsons2=
+                null;
+        try {
+//            gsons1 = ReflectUtil.getMethodDex(this,"com.google.gson.Gson","toJson",String.class);
+//            gsons1.invoke(ReflectUtil.getObject(this,"com.google.gson.Gson"),"{abc:xxx}");
+
+            gsons2 = ReflectUtil.getMethodDex(this,"com.google.gson.Gson","toString");
+            gsons2.invoke(ReflectUtil.getObject(this,"com.google.gson.Gson"));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
     }
 
     private void reflect() {
-        LDClassLoaderManager.getInstance(this).CreateClassLoader();
-        try {
-            LDClassLoaderManager.getInstance(this).getClassLoader().loadClass("com.ecar.dymicloader.A");
-            LDClassLoaderManager.getInstance(this).getClassLoader().loadClass("com.ecar.dymicloader.B");
-            LDClassLoaderManager.getInstance(this).getClassLoader().loadClass("com.ecar.dymicloader.C");
-            LDClassLoaderManager.getInstance(this).getClassLoader().loadClass("com.ecar.dymicloader.BaseAbc");
-
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
         Method baseAbc1=
                 null;
         Method baseAbc2=
@@ -44,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
         Method baseAbc3=
                 null;
         try {
-            baseAbc1 = ReflectUtil.getMethodDex(this,"com.ecar.dymicloader.A","show",String.class);
-            baseAbc2 = ReflectUtil.getMethodDex(this,"com.ecar.dymicloader.B","show",String.class);
-            baseAbc3 = ReflectUtil.getMethodDex(this,"com.ecar.dymicloader.C","show",String.class);
+            baseAbc1 = ReflectUtil.getMethodDex(this,"gt.ecar.com.mylibrary.A","show",String.class);
+            baseAbc2 = ReflectUtil.getMethodDex(this,"gt.ecar.com.mylibrary.B","show",String.class);
+            baseAbc3 = ReflectUtil.getMethodDex(this,"gt.ecar.com.mylibrary.C","show",String.class);
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -61,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            baseAbc1.invoke(ReflectUtil.getObject(this,"com.ecar.dymicloader.A"),"is A");
-            baseAbc2.invoke(ReflectUtil.getObject(this,"com.ecar.dymicloader.B"),"is B");
-            baseAbc3.invoke(ReflectUtil.getObject(this,"com.ecar.dymicloader.C"),"is C");
+            baseAbc1.invoke(ReflectUtil.getObject(this,"gt.ecar.com.mylibrary.A"),"is A");
+            baseAbc2.invoke(ReflectUtil.getObject(this,"gt.ecar.com.mylibrary.B"),"is B");
+            baseAbc3.invoke(ReflectUtil.getObject(this,"gt.ecar.com.mylibrary.C"),"is C");
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -74,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
+
     }
 
     private void common() {

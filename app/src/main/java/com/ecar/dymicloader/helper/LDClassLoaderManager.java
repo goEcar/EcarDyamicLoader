@@ -22,7 +22,9 @@ import dalvik.system.DexClassLoader;
 public class LDClassLoaderManager {
 
     //dex的名称
-    private static final String LD_DEX_NAME = "shenzhen".concat("ecar.dex");
+    private static  String LD_DEX_NAME = "shenzhen".concat("ecar");
+
+
 
     //sd卡的路径
     static public String dexsrc = null;
