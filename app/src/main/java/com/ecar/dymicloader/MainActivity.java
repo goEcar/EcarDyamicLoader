@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         String concat = sdPatch.concat(File.separator).concat(PluginManager.TEST_PLUGIN_NAME).concat(PluginDirHelper.File_Suff);
 //        String concat = sdPatch.concat(File.separator).concat("asdf").concat(PluginDirHelper.File_Suff);
 
-        DLFileUtils.retrieveApkFromAssets(this,PluginManager.TEST_PLUGIN_NAME,concat);
+//        DLFileUtils.retrieveApkFromAssets(this,PluginManager.TEST_PLUGIN_NAME,concat);
         try {
             pluginManager.initPlugin(concat, PluginManager.TEST_PLUGIN_NAME);
             Class<?> class1 = pluginManager.dexClassLoader.loadClass("com.etest.calcumoney.MoneyCalcu");
