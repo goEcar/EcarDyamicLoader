@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         //测试数据------
 
         PluginManager.getInstance(getApplication()).initLoaderJar(jarName, jarVersion, "");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         Integer result = (Integer) PluginManager.getInstance(getApplication()).invokeMethod("com.etest.calcumoney.MoneyCalcu", "calcu", 12);
         Toast.makeText(this, "" + result, Toast.LENGTH_SHORT).show();
     }

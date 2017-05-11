@@ -50,6 +50,7 @@ public class PluginManager implements IPluginLoader {
     private Application mContext;
     private DroidSpManager spManager;
     public DexClassLoader dexClassLoader;
+    private boolean isLoaded = false;
 
     public static final String DEX_TEMP_CACHE_PATH_ENDING = "temp";
 
@@ -86,8 +87,11 @@ public class PluginManager implements IPluginLoader {
     @Override
     public boolean initLoaderJar(String jarName, String jarVersion, String downUrl) {
         boolean result = false;
-        //1.查sp jar版本 与当前版本比较。不同则更新 通则加载。
-        if (TextUtils.isEmpty(jarVersion) || TextUtils.isEmpty(jarName)) {
+        //1.查sp jar版本 与当前版本比较。不同则更新 通则加载。家再过则不处理
+        if(isLoaded){
+            return false;
+        }
+        if (TextUtils.isEmpty(jarVersion) || TextUtils.isEmpty(jarName) ) {
             return false;
         }
         String jarVersionCache = spManager.getJarVersionByName(jarName);
@@ -113,6 +117,8 @@ public class PluginManager implements IPluginLoader {
         String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(DEX_TEMP_CACHE_PATH_ENDING), fileName);
         dexClassLoader = new DexClassLoader(dexPath, dexOutputDir, null, this
                 .getClass().getClassLoader());
+        isLoaded = true;
+
     }
 
     /**
