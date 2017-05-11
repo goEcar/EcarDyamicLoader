@@ -28,18 +28,20 @@ public class MainActivity extends AppCompatActivity {
         //反射
 //        reflect();
 //        testGson();
-        testData();
+//        testData();
+        testData2();
     }
 
-    private void testData() {
+    public static final String TEST_PLUGIN_NAME = "calcumoney.dex";
+    private void testData2() {
         PluginManager pluginManager = new PluginManager(getApplication());
-        String sdPatch = DLFileUtils.getSdPatch(this);
-        String concat = sdPatch.concat(File.separator).concat(PluginManager.TEST_PLUGIN_NAME).concat(PluginDirHelper.File_Suff);
-//        String concat = sdPatch.concat(File.separator).concat("asdf").concat(PluginDirHelper.File_Suff);
 
-//        DLFileUtils.retrieveApkFromAssets(this,PluginManager.TEST_PLUGIN_NAME,concat);
+        String jarName = "pda_test";
+        String jarVersion = "1";
+        String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(getApplication(),jarName.concat(PluginManager.DEX_TEMP_CACHE_PATH_ENDING),jarVersion);
+        DLFileUtils.retrieveApkFromAssets(this,TEST_PLUGIN_NAME,dexPath);
         try {
-            pluginManager.initPlugin(concat, PluginManager.TEST_PLUGIN_NAME);
+            pluginManager.initLoaderJar(jarName,jarVersion,"");
             Class<?> class1 = pluginManager.dexClassLoader.loadClass("com.etest.calcumoney.MoneyCalcu");
             Object object = class1.newInstance();
 //            Class[] params = new Class[1];
@@ -58,6 +60,34 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+//    private void testData() {
+//        PluginManager pluginManager = new PluginManager(getApplication());
+//        String sdPatch = DLFileUtils.getSdPatch(this);
+//        String concat = sdPatch.concat(File.separator).concat(PluginManager.TEST_PLUGIN_NAME).concat(PluginDirHelper.DEX_File_Suff);
+////        String concat = sdPatch.concat(File.separator).concat("asdf").concat(PluginDirHelper.File_Suff);
+//
+////        DLFileUtils.retrieveApkFromAssets(this,PluginManager.TEST_PLUGIN_NAME,concat);
+//        try {
+//            pluginManager.initPlugin(concat, PluginManager.TEST_PLUGIN_NAME);
+//            Class<?> class1 = pluginManager.dexClassLoader.loadClass("com.etest.calcumoney.MoneyCalcu");
+//            Object object = class1.newInstance();
+////            Class[] params = new Class[1];
+////            params[0] = Integer.TYPE;
+//////            params[1] = Integer.TYPE;
+////            Method action = class1.getMethod("calcu", params);
+////            Integer ret = (Integer) action.invoke(object, 12);
+//
+//
+//            Class[] params = new Class[1];
+//            params[0] = Integer.TYPE;
+//            Method calcu = MethodUtils.getAccessibleMethod(class1, "calcu", params);
+//            Integer ret = (Integer) calcu.invoke(object, 12);
+//            Toast.makeText(this, "" + ret, Toast.LENGTH_SHORT).show();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     //测试gson

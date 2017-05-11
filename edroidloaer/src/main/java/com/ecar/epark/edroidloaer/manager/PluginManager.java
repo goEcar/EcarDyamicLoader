@@ -22,16 +22,22 @@
 
 package com.ecar.epark.edroidloaer.manager;
 
-import android.content.Context;
+import android.app.Application;
+import android.text.TextUtils;
 
 
 import com.ecar.epark.edroidloaer.core.PluginDirHelper;
+import com.ecar.epark.edroidloaer.db.DroidSpManager;
+import com.ecar.epark.edroidloaer.down.DownJarManager;
 import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
 
 import java.io.File;
-
 import dalvik.system.DexClassLoader;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * 此服务模仿系统的PackageManagerService，提供对插件简单的管理服务。
@@ -39,119 +45,87 @@ import dalvik.system.DexClassLoader;
  */
 public class PluginManager implements IPluginLoader {
 
-    private final String TAG = PluginManager.class.getSimpleName();
-    private Context mContext;
+    private Application mContext;
+    private DroidSpManager spManager;
     public DexClassLoader dexClassLoader;
 
-    public PluginManager(Context context) {
+    public static final String DEX_TEMP_CACHE_PATH_ENDING = "temp";
+
+    public PluginManager(Application context) {
         mContext = context;
+        spManager = new DroidSpManager(context);
     }
 
-    public static final String TEST_PLUGIN_NAME = "calcumoney";
-
-    public synchronized void initPlugin(final String externalPath, final String pluginName) throws Exception {
-//        new Thread() {
-//            @Override
-//            public void run() {
-        try {
-            //1.判断sd 有新包，源文件路径
-            //2.sd没有新包，资产文件路径
-            File externalFile = new File(externalPath);
-            if (!externalFile.exists()) {
-                //缓存下没有新包，则拷贝资产目录下dex
-                DLFileUtils.retrieveApkFromAssets(mContext, pluginName.concat(PluginDirHelper.File_Suff), externalFile.getAbsolutePath());
-            }
-            externalFile = new File(externalPath);
-            if (externalFile.exists()) {
-                String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, pluginName);
-                dexOpt(externalFile.getAbsolutePath(), dexOutputDir);
-            }
-        } catch (Exception e) {
-            //删除缓存文件
-            String cachefilePath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, pluginName);
-            DLFileUtils.deleteDir(cachefilePath);
-        }
-//            }
-//        }.start();
-    }
-
+    /**
+     * 加载jar（dex）
+     * @param jarName    jar名称，当做jar包目录名
+     * @param jarVersion jar 版本，当做jar 文件名
+     * @param downUrl    若没有对应版本则下载后加载
+     * @return 是否加载成功
+     */
     @Override
-    public boolean initLoaderJar(String jarVersion, String downUrl) {
-        return false;
+    public boolean initLoaderJar(String jarName, String jarVersion, String downUrl) {
+        boolean result = false;
+        //1.查sp jar版本 与当前版本比较。不同则更新 通则加载。
+        if (TextUtils.isEmpty(jarVersion) || TextUtils.isEmpty(jarName)) {
+            return false;
+        }
+        String jarVersionCache = spManager.getJarVersionByName(jarName);
+        //对比缓存
+        if (!jarVersion.equals(jarVersionCache)) {
+            //不相同：去下载
+            result = true;//downJar(jarName, jarVersion, downUrl);
+            if(!result){
+                return false;
+            }
+            spManager.setJarVersionByName(jarName,jarVersion);
+        }
+        //1.删除其他同类文件
+        String cacheDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, jarName);//jarName 当文件目录名，jarVersion 当文件名
+        DLFileUtils.deleteFileButOne(new File(cacheDir),jarVersion);
+        //2.加载
+        loaderDex(jarName,jarVersion);//传递文件目录名 进去
+        return true;
     }
 
-
-
-
-    private void dexOpt(String dexPath, String dexOutputDir) throws Exception {
+    private void loaderDex(String folderName,String fileName) {
+        String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, folderName);
+        String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(DEX_TEMP_CACHE_PATH_ENDING), fileName);
         dexClassLoader = new DexClassLoader(dexPath, dexOutputDir, null, this
                 .getClass().getClassLoader());
-
-//        ClassLoader classloader = new PluginClassLoader(apkfile, optimizedDirectory, libraryPath, hostContext.getClassLoader().getParent());
-//        DexFile dexFile = DexFile.loadDex(apkfile, PluginDirHelper.getPluginDalvikCacheFile(mContext, parser.getPackageName()), 0);
-
-//        Log.e(TAG, "dexFile=%s,1=%s,2=%s", dexFile, DexFile.isDexOptNeeded(apkfile), DexFile.isDexOptNeeded(PluginDirHelper.getPluginDalvikCacheFile(mContext, parser.getPackageName())));
     }
 
-    public void onDestroy() {
-        mContext = null;
+    /**
+     * 下载jar包
+     *
+     * @param folderName jarName 目录名称
+     * @param fileName   jarVersion 文件名称
+     * @param downUrl
+     */
+    private boolean downJar(String folderName, String fileName, final String downUrl) {
+        final String downPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName, fileName);
+        Observable<Boolean> treeMapObservable = Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                DownJarManager downJarManager = new DownJarManager(downPath, downUrl);
+                boolean downResult = downJarManager.startDownFile();
+                subscriber.onNext(downResult);
+            }
+        }).compose(this.<Boolean>rxScheduler());
+        Boolean downResult = treeMapObservable.toBlocking().first();
+        return downResult;
     }
 
-
-//    public synchronized void initPlugin(final String externalPath, final String pluginName) throws Exception {
-////        new Thread() {
-////            @Override
-////            public void run() {
-//        try {
-//            //1.判断sd 有新包，源文件路径
-//            //2.sd没有新包，资产文件路径
-//            File externalFile = new File(externalPath);
-//            if (!externalFile.exists()) {
-//                //缓存下没有新包，则拷贝资产目录下dex
-//                DLFileUtils.retrieveApkFromAssets(mContext, pluginName.concat(PluginDirHelper.File_Suff), externalFile.getAbsolutePath());
-//            }
-//            externalFile = new File(externalPath);
-//            if (externalFile.exists()) {
-//                String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, pluginName);
-//                dexOpt(externalFile.getAbsolutePath(), dexOutputDir);
-//            }
-//        } catch (Exception e) {
-//            //删除缓存文件
-//            String cachefilePath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, pluginName);
-//            DLFileUtils.deleteDir(cachefilePath);
-//        }
-////            }
-////        }.start();
-//    }
-
-//    public synchronized void installPlugin(final String externalPath, final String pluginName) throws Exception {
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                try {
-//                    //1.判断sd 有新包，有则替换缓存目录下的dex
-//                    //2.sd没有新包，判断缓存目录下是否有dex，没有则拷贝资产目录dex到缓存
-//                    File externalFile = new File(externalPath);
-//                    String cachefilePath = null;
-//                    cachefilePath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, pluginName);
-//                    if (externalFile.exists()) {
-//                        //sd有新包
-//                        DLFileUtils.deleteDir(cachefilePath);
-//                        DLFileUtils.copyFile(externalPath, cachefilePath);
-//                    } else {
-//                        //sd没有新包
-//                        if(!new File(cachefilePath).exists()){
-//                            //缓存下没有新包，则拷贝资产目录下dex
-//                            DLFileUtils.retrieveApkFromAssets(mContext,pluginName.concat(PluginDirHelper.File_Suff),cachefilePath);
-//                        }
-//                    }
-//                    dexOpt(mContext, apkfile, pluginName);
-//                } catch (Exception e) {
-//                    if (apkfile != null) {
-//                        new File(apkfile).delete();
-//                    }
-//                }
-//            }
-//        }.start();
-//    }
+    /**
+     * 线程转换
+     * @param <T>
+     * @return
+     */
+    private  <T> Observable.Transformer<T, T> rxScheduler() {
+        return new Observable.Transformer<T, T>() {
+            public Observable<T> call(Observable<T> tObservable) {
+                return tObservable.subscribeOn(Schedulers.io()).unsubscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
 }

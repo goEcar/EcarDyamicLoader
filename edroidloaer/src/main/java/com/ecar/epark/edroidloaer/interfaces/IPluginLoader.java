@@ -7,5 +7,5 @@ package com.ecar.epark.edroidloaer.interfaces;
  */
 public interface IPluginLoader {
 
-    boolean initLoaderJar(String jarVersion,String downUrl);
+    boolean initLoaderJar(String jarName,String jarVersion,String downUrl);
 }

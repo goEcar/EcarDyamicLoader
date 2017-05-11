@@ -20,7 +20,7 @@
 **
 **/
 
-package com.ecar.epark.edroidloaer.core;
+package com.ecar.epark.edroidloaer.retain;
 
 import android.os.Build;
 import android.util.Log;

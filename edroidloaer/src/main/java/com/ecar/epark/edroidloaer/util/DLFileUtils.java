@@ -92,7 +92,7 @@ public class DLFileUtils {
     }
 
     private static void deleteFile(File file) {
-        if(!file.exists()){
+        if (!file.exists()) {
             return;
         }
         if (file.isDirectory()) {
@@ -102,6 +102,22 @@ public class DLFileUtils {
             }
         }
         file.delete();
+    }
+
+    public static void deleteFileButOne(File file, String fileName) {
+        if (!file.exists()) {
+            return;
+        }
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                deleteFileButOne(files[i], fileName);
+            }
+        }
+        if (!TextUtils.isEmpty(fileName)
+                && fileName.equals(file.getName())) {
+            file.delete();
+        }
     }
 
     public static void writeToFile(File file, byte[] data) throws IOException {
@@ -188,7 +204,7 @@ public class DLFileUtils {
             return Environment.getExternalStorageDirectory().getAbsolutePath().toString();
         } else {
             String patch = null;
-            if (TextUtils.isEmpty(patch = PluginDirHelper.makePluginBaseDir(activity,"ecartemp"))) {
+            if (TextUtils.isEmpty(patch = PluginDirHelper.makePluginBaseDir(activity, "ecartemp"))) {
                 return activity.getCacheDir().getAbsolutePath();
             } else {
                 return patch;
@@ -212,7 +228,7 @@ public class DLFileUtils {
             boolean i = false;
 
             int i1;
-            while((i1 = e.read(temp)) > 0) {
+            while ((i1 = e.read(temp)) > 0) {
                 fos.write(temp, 0, i1);
             }
 

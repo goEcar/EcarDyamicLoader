@@ -44,7 +44,7 @@ public class PluginDirHelper {
 
     private static File sBaseDir = null;
 
-    public static final String File_Suff = ".dex";
+    public static final String DEX_File_Suff = ".dex";
 
     private static void init(Context context) {
         if (sBaseDir == null) {
@@ -108,7 +108,8 @@ public class PluginDirHelper {
         return new File(getPluginApkDir(context, pluginInfoPackageName), "base-1.apk").getPath();
     }
 
-    public static String getPluginDalvikCacheDir(Context context, String pluginInfoPackageName) {
+//    * dex缓存目录： /data/data/com.HOST.PACKAGE/Plugin/dex名称/dalvik-cache/
+    public static String  getPluginDalvikCacheDir(Context context, String pluginInfoPackageName) {
         return enforceDirExists(new File(makePluginBaseDir(context, pluginInfoPackageName), "dalvik-cache"));
     }
 
@@ -116,9 +117,13 @@ public class PluginDirHelper {
         return enforceDirExists(new File(makePluginBaseDir(context, pluginInfoPackageName), "lib"));
     }
 
-    public static String getPluginDalvikCacheDexFile(Context context, String pluginInfoPackageName) {
-        return new File(getPluginDalvikCacheDir(context, pluginInfoPackageName), pluginInfoPackageName.concat(".dex")).getPath();
+    public static String getPluginDalvikCacheDexFile(Context context, String folderName,String fileName) {
+        return new File(getPluginDalvikCacheDir(context, folderName), fileName.concat(DEX_File_Suff)).getPath();
     }
+
+//    public static String getPluginDalvikCacheDexFile(Context context, String pluginInfoPackageName,) {
+//        return new File(getPluginDalvikCacheDir(context, pluginInfoPackageName), pluginInfoPackageName.concat(DEX_File_Suff)).getPath();
+//    }
 
 
     public static String g1etPlug1nDalvikCacheFile(Context context, String pluginInfoPackageName) {
