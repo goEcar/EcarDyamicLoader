@@ -24,12 +24,14 @@ package com.ecar.epark.edroidloaer.manager;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 
 import com.ecar.epark.edroidloaer.core.PluginDirHelper;
 import com.ecar.epark.edroidloaer.db.DroidSpManager;
 import com.ecar.epark.edroidloaer.down.DownJarManager;
 import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
+import com.ecar.epark.edroidloaer.reflect.MethodUtils;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
 
 import java.io.File;
@@ -55,6 +57,24 @@ public class PluginManager implements IPluginLoader {
         mContext = context;
         spManager = new DroidSpManager(context);
     }
+
+    /******************************单例******************************/
+
+    public static PluginManager pluginManager;
+
+    public static PluginManager getInstance(Application mContext){
+        if(pluginManager == null){
+            synchronized (PluginManager.class){
+                if(pluginManager == null){
+                    pluginManager = new PluginManager(mContext);
+                }
+            }
+        }
+        return pluginManager;
+    }
+
+
+    /******************************加载dex***************************/
 
     /**
      * 加载jar（dex）
@@ -103,7 +123,8 @@ public class PluginManager implements IPluginLoader {
      * @param downUrl
      */
     private boolean downJar(String folderName, String fileName, final String downUrl) {
-        final String downPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName, fileName);
+        //先存在临时缓存目录： * dex缓存目录： /data/data/包名/Plugin/插件名temp/dalvik-cache/ 最终DexClassLoader加载 去掉temp。对应目录
+        final String downPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(PluginManager.DEX_TEMP_CACHE_PATH_ENDING), fileName);
         Observable<Boolean> treeMapObservable = Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
@@ -127,5 +148,26 @@ public class PluginManager implements IPluginLoader {
                 return tObservable.subscribeOn(Schedulers.io()).unsubscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread());
             }
         };
+    }
+
+
+    /*****************************invoke method***********************/
+    /**
+     * 反射调用方法
+     * @param classAbsoluteName 类绝对路径
+     * @param methodName 方法名
+     * @param args 形参
+     */
+    public Object invokeMethod(String classAbsoluteName,String methodName,Object... args) {
+        Object result = null;
+        try {
+            Class<?> clazz = dexClassLoader.loadClass(classAbsoluteName);
+            Object object = clazz.newInstance();
+            result = MethodUtils.invokeMethod(object, methodName, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            return result;
+        }
     }
 }
