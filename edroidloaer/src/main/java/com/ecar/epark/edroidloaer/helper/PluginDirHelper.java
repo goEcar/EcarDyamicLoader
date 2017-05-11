@@ -20,7 +20,7 @@
 **
 **/
 
-package com.ecar.epark.edroidloaer.core;
+package com.ecar.epark.edroidloaer.helper;
 
 import android.content.Context;
 import android.os.Environment;

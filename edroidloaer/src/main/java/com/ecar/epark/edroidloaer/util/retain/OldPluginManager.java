@@ -20,24 +20,9 @@
 **
 **/
 
-package com.ecar.epark.edroidloaer.retain;
+package com.ecar.epark.edroidloaer.util.retain;
 
-import android.app.Application;
-import android.text.TextUtils;
-
-import com.ecar.epark.edroidloaer.core.PluginDirHelper;
-import com.ecar.epark.edroidloaer.db.DroidSpManager;
-import com.ecar.epark.edroidloaer.down.DownJarManager;
 import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
-import com.ecar.epark.edroidloaer.util.DLFileUtils;
-
-import java.io.File;
-
-import dalvik.system.DexClassLoader;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * 此服务模仿系统的PackageManagerService，提供对插件简单的管理服务。

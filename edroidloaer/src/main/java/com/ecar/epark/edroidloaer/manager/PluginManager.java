@@ -24,12 +24,11 @@ package com.ecar.epark.edroidloaer.manager;
 
 import android.app.Application;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 
-import com.ecar.epark.edroidloaer.core.PluginDirHelper;
+import com.ecar.epark.edroidloaer.helper.PluginDirHelper;
 import com.ecar.epark.edroidloaer.db.DroidSpManager;
-import com.ecar.epark.edroidloaer.down.DownJarManager;
+import com.ecar.epark.edroidloaer.util.down.DownJarManager;
 import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
 import com.ecar.epark.edroidloaer.reflect.MethodUtils;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;

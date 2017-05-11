@@ -28,7 +28,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 
-import com.ecar.epark.edroidloaer.core.PluginDirHelper;
+import com.ecar.epark.edroidloaer.helper.PluginDirHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
