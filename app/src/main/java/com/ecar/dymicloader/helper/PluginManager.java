@@ -51,27 +51,29 @@ public class PluginManager {
 //        new Thread() {
 //            @Override
 //            public void run() {
-                try {
-                    //1.判断sd 有新包，源文件路径
-                    //2.sd没有新包，资产文件路径
-                    File externalFile = new File(externalPath);
-                    if (!externalFile.exists()) {
-                        //缓存下没有新包，则拷贝资产目录下dex
-                        DLFileUtils.retrieveApkFromAssets(mContext, pluginName.concat(PluginDirHelper.File_Suff), externalFile.getAbsolutePath());
-                    }
-                    externalFile = new File(externalPath);
-                    if (externalFile.exists()) {
-                        String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, pluginName);
-                        dexOpt(externalFile.getAbsolutePath(), dexOutputDir);
-                    }
-                } catch (Exception e) {
-                    //删除缓存文件
-                    String cachefilePath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, pluginName);
-                    DLFileUtils.deleteDir(cachefilePath);
-                }
+        try {
+            //1.判断sd 有新包，源文件路径
+            //2.sd没有新包，资产文件路径
+            File externalFile = new File(externalPath);
+            if (!externalFile.exists()) {
+                //缓存下没有新包，则拷贝资产目录下dex
+                DLFileUtils.retrieveApkFromAssets(mContext, pluginName.concat(PluginDirHelper.File_Suff), externalFile.getAbsolutePath());
+            }
+            externalFile = new File(externalPath);
+            if (externalFile.exists()) {
+                String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, pluginName);
+                dexOpt(externalFile.getAbsolutePath(), dexOutputDir);
+            }
+        } catch (Exception e) {
+            //删除缓存文件
+            String cachefilePath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, pluginName);
+            DLFileUtils.deleteDir(cachefilePath);
+        }
 //            }
 //        }.start();
     }
+
+
 
     private void dexOpt(String dexPath, String dexOutputDir) throws Exception {
         dexClassLoader = new DexClassLoader(dexPath, dexOutputDir, null, this
@@ -87,6 +89,32 @@ public class PluginManager {
         mContext = null;
     }
 
+
+//    public synchronized void initPlugin(final String externalPath, final String pluginName) throws Exception {
+////        new Thread() {
+////            @Override
+////            public void run() {
+//        try {
+//            //1.判断sd 有新包，源文件路径
+//            //2.sd没有新包，资产文件路径
+//            File externalFile = new File(externalPath);
+//            if (!externalFile.exists()) {
+//                //缓存下没有新包，则拷贝资产目录下dex
+//                DLFileUtils.retrieveApkFromAssets(mContext, pluginName.concat(PluginDirHelper.File_Suff), externalFile.getAbsolutePath());
+//            }
+//            externalFile = new File(externalPath);
+//            if (externalFile.exists()) {
+//                String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, pluginName);
+//                dexOpt(externalFile.getAbsolutePath(), dexOutputDir);
+//            }
+//        } catch (Exception e) {
+//            //删除缓存文件
+//            String cachefilePath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, pluginName);
+//            DLFileUtils.deleteDir(cachefilePath);
+//        }
+////            }
+////        }.start();
+//    }
 
 //    public synchronized void installPlugin(final String externalPath, final String pluginName) throws Exception {
 //        new Thread() {
