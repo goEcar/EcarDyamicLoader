@@ -8,7 +8,7 @@ import com.ecar.epark.edroidloaer.core.PluginDirHelper;
 import com.ecar.epark.edroidloaer.manager.PluginManager;
 import com.ecar.epark.edroidloaer.reflect.MethodUtils;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
-import com.ecar.epark.edroidloaer.util.ReflectUtil;
+import com.ecar.epark.edroidloaer.retain.ReflectUtil;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

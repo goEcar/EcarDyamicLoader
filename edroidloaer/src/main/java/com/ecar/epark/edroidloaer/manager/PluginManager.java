@@ -26,6 +26,7 @@ import android.content.Context;
 
 
 import com.ecar.epark.edroidloaer.core.PluginDirHelper;
+import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
 
 import java.io.File;
@@ -36,7 +37,7 @@ import dalvik.system.DexClassLoader;
  * 此服务模仿系统的PackageManagerService，提供对插件简单的管理服务。
  * Created by Andy Zhang(zhangyong232@gmail.com) on 2015/2/12.
  */
-public class PluginManager {
+public class PluginManager implements IPluginLoader {
 
     private final String TAG = PluginManager.class.getSimpleName();
     private Context mContext;
@@ -73,6 +74,12 @@ public class PluginManager {
 //            }
 //        }.start();
     }
+
+    @Override
+    public boolean initLoaderJar(String jarVersion, String downUrl) {
+        return false;
+    }
+
 
 
 
