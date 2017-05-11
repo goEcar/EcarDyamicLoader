@@ -1,8 +1,9 @@
-package com.ecar.dymicloader.util;
+package com.ecar.epark.edroidloaer.util;
 
 import android.content.Context;
 
-import com.ecar.dymicloader.helper.LDClassLoaderManager;
+
+import com.ecar.epark.edroidloaer.manager.LDClassLoaderManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

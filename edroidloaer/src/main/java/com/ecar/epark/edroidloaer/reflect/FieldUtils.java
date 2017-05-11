@@ -20,11 +20,9 @@
 **
 **/
 
-package com.ecar.dymicloader.reflect;
+package com.ecar.epark.edroidloaer.reflect;
 
 import android.text.TextUtils;
-
-import com.ecar.dymicloader.util.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

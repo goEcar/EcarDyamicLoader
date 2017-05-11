@@ -1,4 +1,10 @@
-package com.ecar.dymicloader.helper;
+package com.ecar.epark.edroidloaer.manager;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,13 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.Environment;
-import android.os.storage.StorageManager;
-import android.text.TextUtils;
-import android.util.Log;
 
 import dalvik.system.DexClassLoader;
 

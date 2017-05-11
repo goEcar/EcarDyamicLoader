@@ -20,12 +20,13 @@
 **
 **/
 
-package com.ecar.dymicloader.helper;
+package com.ecar.epark.edroidloaer.manager;
 
 import android.content.Context;
 
-import com.ecar.dymicloader.core.PluginDirHelper;
-import com.ecar.dymicloader.util.DLFileUtils;
+
+import com.ecar.epark.edroidloaer.core.PluginDirHelper;
+import com.ecar.epark.edroidloaer.util.DLFileUtils;
 
 import java.io.File;
 

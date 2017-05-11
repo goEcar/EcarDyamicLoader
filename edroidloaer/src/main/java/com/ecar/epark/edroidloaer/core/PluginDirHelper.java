@@ -20,7 +20,7 @@
 **
 **/
 
-package com.ecar.dymicloader.core;
+package com.ecar.epark.edroidloaer.core;
 
 import android.content.Context;
 import android.os.Environment;

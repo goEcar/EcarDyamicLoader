@@ -1,1 +1,1 @@
-include ':app', ':mylibrary', ':edroidloaer'
+include ':app', ':edroidloaer'
