@@ -4,9 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.ecar.epark.edroidloaer.helper.PluginDirHelper;
+import com.ecar.epark.edroidloaer.manager.helper.PluginDirHelper;
 import com.ecar.epark.edroidloaer.manager.PluginManager;
-import com.ecar.epark.edroidloaer.reflect.MethodUtils;
+import com.ecar.epark.edroidloaer.util.reflect.MethodUtils;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
 import com.ecar.epark.edroidloaer.util.retain.ReflectUtil;
 

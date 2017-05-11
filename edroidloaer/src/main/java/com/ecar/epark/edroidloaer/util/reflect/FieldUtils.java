@@ -20,7 +20,7 @@
 **
 **/
 
-package com.ecar.epark.edroidloaer.reflect;
+package com.ecar.epark.edroidloaer.util.reflect;
 
 import android.text.TextUtils;
 

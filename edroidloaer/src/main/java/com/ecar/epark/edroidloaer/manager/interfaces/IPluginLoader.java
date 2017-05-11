@@ -1,4 +1,4 @@
-package com.ecar.epark.edroidloaer.interfaces;
+package com.ecar.epark.edroidloaer.manager.interfaces;
 
 /**
  * 定义lib 对外提供的接口

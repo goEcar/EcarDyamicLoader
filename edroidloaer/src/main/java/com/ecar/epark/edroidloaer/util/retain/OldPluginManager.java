@@ -22,7 +22,7 @@
 
 package com.ecar.epark.edroidloaer.util.retain;
 
-import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
+import com.ecar.epark.edroidloaer.manager.interfaces.IPluginLoader;
 
 /**
  * 此服务模仿系统的PackageManagerService，提供对插件简单的管理服务。

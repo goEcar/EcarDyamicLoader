@@ -26,11 +26,11 @@ import android.app.Application;
 import android.text.TextUtils;
 
 
-import com.ecar.epark.edroidloaer.helper.PluginDirHelper;
+import com.ecar.epark.edroidloaer.manager.helper.PluginDirHelper;
 import com.ecar.epark.edroidloaer.db.DroidSpManager;
 import com.ecar.epark.edroidloaer.util.down.DownJarManager;
-import com.ecar.epark.edroidloaer.interfaces.IPluginLoader;
-import com.ecar.epark.edroidloaer.reflect.MethodUtils;
+import com.ecar.epark.edroidloaer.manager.interfaces.IPluginLoader;
+import com.ecar.epark.edroidloaer.util.reflect.MethodUtils;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
 
 import java.io.File;
