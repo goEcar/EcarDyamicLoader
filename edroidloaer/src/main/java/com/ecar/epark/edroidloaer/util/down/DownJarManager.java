@@ -42,6 +42,7 @@ public class DownJarManager {
         InputStream is = null;
         FileOutputStream fos = null;
         BufferedInputStream bis = null;
+        File file = null;
         try {
             // 如果相等的话表示当前的sdcard挂载在手机上并且是可用的
 //            if (Environment.getExternalStorageState().equals(
@@ -52,7 +53,7 @@ public class DownJarManager {
                 conn.setRequestProperty("Accept-Encoding", "identity"); //加上这句话解决问题
                 conn.setConnectTimeout(5000);
                 is = conn.getInputStream();
-                File file = new File(filePath);
+                file = new File(filePath);
                 fos = new FileOutputStream(file);
                 bis = new BufferedInputStream(is);
                 byte[] buffer = new byte[1024];
@@ -69,7 +70,6 @@ public class DownJarManager {
                         tempstep = 0;
                     }
                 }
-                return file;
 //            }
 //            else {
 //                return null;
@@ -86,7 +86,7 @@ public class DownJarManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return file;
         }
     }
 

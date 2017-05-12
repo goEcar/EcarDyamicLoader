@@ -37,20 +37,23 @@ public class MainActivity extends AppCompatActivity {
 //        PluginManager pluginManager = new PluginManager(getApplication());
 
         //测试数据------ 模拟jar包下载到缓存中
-        String jarName = "pda_test";
-        String jarVersion = "1";
-        String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(getApplication(), jarName.concat(PluginManager.DEX_TEMP_CACHE_PATH_ENDING), jarVersion);
-        DLFileUtils.retrieveApkFromAssets(this, TEST_PLUGIN_NAME, dexPath);
+        String jarName = "pda_test4";
+        String jarVersion = "4";
+//        String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(getApplication(), jarName.concat(PluginManager.DEX_TEMP_CACHE_PATH_ENDING), jarVersion);
+//        DLFileUtils.retrieveApkFromAssets(this, TEST_PLUGIN_NAME, dexPath);
         //测试数据------
 
-        PluginManager.getInstance(getApplication()).initLoaderJar(jarName, jarVersion, "");
+        String url = "http://www.szkljy.com:9007/std/data?module=sys&service=File&method=downApp&type=pricing&fileName=t1.jar&t=1494471167315";
+        PluginManager.getInstance(getApplication()).initLoaderJar(jarName, jarVersion, url);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Integer result = (Integer) PluginManager.getInstance(getApplication()).invokeMethod("com.etest.calcumoney.MoneyCalcu", "calcu", 12);
+        String path = "com.jh".concat(".MoneyCalcu");
+        String pathLocal = "com.etest.calcumoney".concat(".MoneyCalcu");
+        Integer result = (Integer) PluginManager.getInstance(getApplication()).invokeMethod(path, "calcu", 12);
         Toast.makeText(this, "" + result, Toast.LENGTH_SHORT).show();
     }
 

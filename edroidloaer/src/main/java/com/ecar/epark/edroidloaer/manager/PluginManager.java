@@ -102,7 +102,7 @@ public class PluginManager implements IPluginLoader {
         //对比缓存
         if (!jarVersion.equals(jarVersionCache)) {
             //不相同：去下载
-            result = true;//downJar(jarName, jarVersion, downUrl);
+            result = downJar(jarName, jarVersion, downUrl);//true;//
             if(!result){
                 return false;
             }
@@ -154,7 +154,8 @@ public class PluginManager implements IPluginLoader {
     private  <T> Observable.Transformer<T, T> rxScheduler() {
         return new Observable.Transformer<T, T>() {
             public Observable<T> call(Observable<T> tObservable) {
-                return tObservable.subscribeOn(Schedulers.io()).unsubscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread());
+                return tObservable.subscribeOn(Schedulers.io());
+//                .unsubscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread())
             }
         };
     }
