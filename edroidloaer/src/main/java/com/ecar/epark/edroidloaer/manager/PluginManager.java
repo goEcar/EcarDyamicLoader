@@ -34,6 +34,9 @@ import com.ecar.epark.edroidloaer.util.reflect.MethodUtils;
 import com.ecar.epark.edroidloaer.util.DLFileUtils;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import dalvik.system.DexClassLoader;
 import rx.Observable;
 import rx.Subscriber;
@@ -49,13 +52,14 @@ public class PluginManager implements IPluginLoader {
     private Application mContext;
     private DroidSpManager spManager;
     public DexClassLoader dexClassLoader;
-    private boolean isLoaded = false;
+    private Map<String,Boolean> loadedMap;
 
     public static final String DEX_TEMP_CACHE_PATH_ENDING = "temp";
 
     public PluginManager(Application context) {
         mContext = context;
         spManager = new DroidSpManager(context);
+        loadedMap = new HashMap<>();
     }
 
     /******************************单例******************************/
@@ -87,7 +91,8 @@ public class PluginManager implements IPluginLoader {
     public boolean initLoaderJar(String jarName, String jarVersion, String downUrl) {
         boolean result = false;
         //1.查sp jar版本 与当前版本比较。不同则更新 通则加载。家再过则不处理
-        if(isLoaded){
+        Boolean hasLoaded = loadedMap.get(jarName);
+        if(hasLoaded != null && hasLoaded){
             return false;
         }
         if (TextUtils.isEmpty(jarVersion) || TextUtils.isEmpty(jarName) ) {
@@ -116,8 +121,7 @@ public class PluginManager implements IPluginLoader {
         String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(DEX_TEMP_CACHE_PATH_ENDING), fileName);
         dexClassLoader = new DexClassLoader(dexPath, dexOutputDir, null, this
                 .getClass().getClassLoader());
-        isLoaded = true;
-
+        loadedMap.put(folderName,true);
     }
 
     /**
