@@ -40,7 +40,6 @@ import java.util.Map;
 import dalvik.system.DexClassLoader;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -93,7 +92,7 @@ public class PluginManager implements IPluginLoader {
         //1.查sp jar版本 与当前版本比较。不同则更新 通则加载。家再过则不处理
         Boolean hasLoaded = loadedMap.get(jarName);
         if(hasLoaded != null && hasLoaded){
-            return false;
+            return true;
         }
         if (TextUtils.isEmpty(jarVersion) || TextUtils.isEmpty(jarName) ) {
             return false;
@@ -102,26 +101,50 @@ public class PluginManager implements IPluginLoader {
         //对比缓存
         if (!jarVersion.equals(jarVersionCache)) {
             //不相同：去下载
-            result = downJar(jarName, jarVersion, downUrl);//true;//
+            result = downJar(jarName, jarVersion, downUrl);//
+//            result = true;//downJar(jarName, jarVersion, downUrl);//
             if(!result){
                 return false;
             }
-            spManager.setJarVersionByName(jarName,jarVersion);
+
         }
         //1.删除其他同类文件
         String cacheDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, jarName);//jarName 当文件目录名，jarVersion 当文件名
         DLFileUtils.deleteFileButOne(new File(cacheDir),jarVersion);
         //2.加载
-        loaderDex(jarName,jarVersion);//传递文件目录名 进去
-        return true;
+        boolean isLoadSucc = loaderDex(jarName, jarVersion);//传递文件目录名 进去
+        if(jarVersion.equals(jarVersionCache) && isLoadSucc){
+            spManager.setJarVersionByName(jarName,jarVersion);
+        }
+        return isLoadSucc;
     }
 
-    private void loaderDex(String folderName,String fileName) {
-        String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, folderName);
-        String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(DEX_TEMP_CACHE_PATH_ENDING), fileName);
-        dexClassLoader = new DexClassLoader(dexPath, dexOutputDir, null, this
-                .getClass().getClassLoader());
-        loadedMap.put(folderName,true);
+    private boolean loaderDex(String folderName,String fileName) {
+        boolean result = true;
+        try {
+            String dexOutputDir = PluginDirHelper.getPluginDalvikCacheDir(mContext, folderName);
+            String dexPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(DEX_TEMP_CACHE_PATH_ENDING), fileName);
+//        File file = new File(dexPath);
+//        if(file.exists()){
+//            int size = 0;
+//            long length = file.length();
+//            size =2;
+//            System.out.print(size);
+//        }
+//        DLFileUtils.retrieveApkFromAssets(mContext, "pdacalctest.dex", dexPath);
+//         file = new File(dexPath);
+//        if(file.exists()){
+//            int size = 0;
+//            long length = file.length();
+//            size =2;
+//            System.out.print(size);
+//        }
+            dexClassLoader = new DexClassLoader(dexPath, dexOutputDir, null, this.getClass().getClassLoader());
+            loadedMap.put(folderName,true);
+        }catch(Exception e){
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -133,7 +156,7 @@ public class PluginManager implements IPluginLoader {
      */
     private boolean downJar(String folderName, String fileName, final String downUrl) {
         //先存在临时缓存目录： * dex缓存目录： /data/data/包名/Plugin/插件名temp/dalvik-cache/ 最终DexClassLoader加载 去掉temp。对应目录
-        final String downPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(PluginManager.DEX_TEMP_CACHE_PATH_ENDING), fileName);
+        final String downPath = PluginDirHelper.getPluginDalvikCacheDexFile(mContext, folderName.concat(DEX_TEMP_CACHE_PATH_ENDING), fileName);
         Observable<Boolean> treeMapObservable = Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
@@ -174,6 +197,7 @@ public class PluginManager implements IPluginLoader {
             Class<?> clazz = dexClassLoader.loadClass(classAbsoluteName);
             Object object = clazz.newInstance();
             result = MethodUtils.invokeMethod(object, methodName, args);
+//            result = MethodUtils.invokeStaticMethod(clazz, methodName, args);
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
